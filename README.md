@@ -1,0 +1,1 @@
+# TemporizadorCine-ReactNative
