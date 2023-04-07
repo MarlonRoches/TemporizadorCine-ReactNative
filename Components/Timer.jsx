@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput , StyleSheet} from 'react-native';
 
-export default Timer = () => {
+const urlAPI = "https://b1ee-190-148-252-51.ngrok.io/sendData"
+
+export default Timer = ({id, Operador}) => {
   const [startTime, setStartTime] = useState(null);
   const [queueEndTime, setQueueEndTime] = useState(null);
   const [attendEndTime, setAttendEndTime] = useState(null);
   const [totalTime, setTotalTime] = useState(null);
   const [nickname, setNickname] = useState('');
+  const [idNumber, setIdNumber] = useState(id);
+  const [ope, setOperador] = useState(Operador);
 
+    // alert(idNumber)
   const startTimer = () => {
     setStartTime(new Date());
     setQueueEndTime(null)
@@ -22,12 +27,24 @@ export default Timer = () => {
   const markAttendEnd = () => {
     setAttendEndTime(new Date());
   };
+  const getStateData=() =>{
+    const data= {
+        startTime:startTime,
+        queueEndTime:queueEndTime,
+        attendEndTime:attendEndTime,
+        totalTime:totalTime,
+        nickname:nickname,
+        key:`${ope} - ${idNumber}`
+    }
+    return (JSON.stringify(data))
+  }
 
   const calculateTotalTime = () => {
     const queueTime = queueEndTime - startTime;
     const attendTime = attendEndTime - queueEndTime;
     const totalTime = queueTime + attendTime;
     setTotalTime(totalTime);
+    SenData( getStateData(),urlAPI)
   };
 
   const renderTimer = () => {
@@ -84,7 +101,20 @@ function formatTime(date) {
     return `${hours}:${minutes}:${seconds}`;
   }
   
+function SenData(data, url) {
+    fetch(url, {
+  method: 'POST',
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+  body: data,
+})
+  .then(response => response.json())
+  .then(data => console.log("todo ok"))
+  .catch(error => console.error(error));
 
+}
 
 const styles = StyleSheet.create ({
     // container: {
